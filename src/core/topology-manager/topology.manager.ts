@@ -1,9 +1,10 @@
 import { Package, Project, Workspace } from '@yarnpkg/core';
 
 import { TopologyNode } from './models/topology.node';
+import { TopologyReport } from './topology.types';
 
 export class TopologyManager {
-  public async buildTree(project: Project): Promise<TopologyNode[]> {
+  public async buildTree(project: Project): Promise<TopologyReport> {
     await project.restoreInstallState();
 
     const workspaces = this.getEssentialWorkspaces(project);
@@ -11,12 +12,17 @@ export class TopologyManager {
       throw new Error(`Project doesn't have any essentail workspaces`);
     }
 
-    return workspaces.map((workspace) => {
+    const essentails = workspaces.map((workspace) => {
       const node = new TopologyNode(workspace);
-      this.handleWorkspace(project, node);
+      this.fillChildrenNodes(project, node);
 
       return node;
     });
+
+    const root = new TopologyNode(project.topLevelWorkspace);
+    root.children = new Set(essentails);
+
+    return root;
   }
 
   private getWorkspacePackage(project: Project, workspace: Workspace): Package {
@@ -64,7 +70,7 @@ export class TopologyManager {
     return new Set(usedWorkspaces);
   }
 
-  private handleWorkspace(project: Project, rootNode: TopologyNode): any {
+  private fillChildrenNodes(project: Project, rootNode: TopologyNode): void {
     const { workspace, history } = rootNode;
 
     const dependences = this.getWorkspaceExternalDependencies(project, workspace);
@@ -77,7 +83,7 @@ export class TopologyManager {
       const localNode = new TopologyNode(dependency, history);
       rootNode.children.add(localNode);
 
-      this.handleWorkspace(project, localNode);
+      this.fillChildrenNodes(project, localNode);
     });
   }
 }
