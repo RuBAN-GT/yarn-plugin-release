@@ -1,4 +1,4 @@
-import { Descriptor, IdentHash } from '@yarnpkg/core';
+import { Descriptor, IdentHash, LocatorHash } from '@yarnpkg/core';
 import { PortablePath } from '@yarnpkg/fslib';
 
 export interface ReportModel {
@@ -13,6 +13,7 @@ export interface ReportWorkspaceModel {
   scope: string | null;
   path: string | PortablePath;
   relativePath: string | PortablePath;
+  locatorHash: LocatorHash;
   currentVersion: string;
   changedFiles: Array<string | PortablePath>;
   dependencies: Map<IdentHash, Descriptor>;
