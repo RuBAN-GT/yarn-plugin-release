@@ -21,6 +21,11 @@ export class ReportCommand extends Command<CommandContext> {
   })
   public saveReport: boolean = false;
 
+  @Command.Boolean('-t,--topological', {
+    description: 'Preserve topological ordering.',
+  })
+  public topological: boolean = true;
+
   private reportManager: ReportManager = new ReportManager();
 
   @Command.Path('release', 'report')
@@ -28,7 +33,10 @@ export class ReportCommand extends Command<CommandContext> {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const { project } = await Project.find(configuration, this.context.cwd);
 
-    const report = await this.reportManager.generateReport(project, this.ignoreRoot);
+    const report = await this.reportManager.generateReport(project, {
+      ignoreRoot: this.ignoreRoot,
+      topological: this.topological,
+    });
     this.outputReport(report);
   }
 

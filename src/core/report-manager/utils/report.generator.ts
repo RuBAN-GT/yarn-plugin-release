@@ -1,5 +1,5 @@
-import { VersionFile } from '../../utils/version.utils';
-import { ReportModel } from './report.model';
+import { VersionFile } from '../../../utils/version.utils';
+import { ReportModel } from '../report.types';
 
 export function reportGenerator(info: VersionFile, ignoreRoot: boolean = false): ReportModel {
   const { changedFiles, changedWorkspaces, root } = info;
@@ -17,6 +17,7 @@ export function reportGenerator(info: VersionFile, ignoreRoot: boolean = false):
         relativePath: relativeCwd,
         currentVersion: locator.reference,
         changedFiles: [],
+        dependencies: manifest.dependencies,
       }))
       .sort((a, b) => (a.path.length >= b.path.length ? -1 : 1)),
   };
