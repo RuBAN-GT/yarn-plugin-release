@@ -1,4 +1,4 @@
-import { LocatorHash, Project, Workspace } from '@yarnpkg/core';
+import { LocatorHash, Project } from '@yarnpkg/core';
 
 import { openVersionFile } from '../../utils/version.utils';
 import { reportGenerator } from './utils/report.generator';
@@ -11,7 +11,7 @@ export class ReportManager {
   public async generateReport(project: Project, options: ReportGeneratorOptions): Promise<ReportModel> {
     const { ignoreRoot = false, topological = true } = options || {};
 
-    let info = await openVersionFile(project);
+    const info = await openVersionFile(project);
     if (!info) {
       throw new Error('No any relevant information about the project');
     }

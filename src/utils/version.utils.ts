@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /**
  * The imported version of versionUtils module from plugin-version sources
  * due yarn plugin system restrictions.

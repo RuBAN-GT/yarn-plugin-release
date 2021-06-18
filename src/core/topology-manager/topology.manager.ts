@@ -48,7 +48,7 @@ export class TopologyManager {
     const packageData = this.getWorkspacePackage(project, workspace);
     const workspaces: Set<Workspace> = new Set();
 
-    [...packageData.dependencies, ...packageData.peerDependencies].forEach(([_hash, data]) => {
+    [...packageData.dependencies, ...packageData.peerDependencies].forEach(([, data]) => {
       const dependency = project.tryWorkspaceByIdent(data);
       if (dependency) {
         workspaces.add(dependency);
