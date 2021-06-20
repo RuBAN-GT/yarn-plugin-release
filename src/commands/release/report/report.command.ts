@@ -3,7 +3,7 @@ import { Command, Usage } from 'clipanion';
 import { Configuration } from '@yarnpkg/core';
 import { writeFileSync } from 'fs';
 
-import { ReportManager } from '../../core/report-manager/report.manager';
+import { ReportManager } from '../../../core/report-manager';
 
 export class ReportCommand extends Command<CommandContext> {
   public static usage: Usage = Command.Usage({

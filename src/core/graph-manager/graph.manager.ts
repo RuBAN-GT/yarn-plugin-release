@@ -1,10 +1,10 @@
 import { Package, Project, Workspace } from '@yarnpkg/core';
 
-import { TopologyNode } from './models/topology.node';
-import { TopologyReport } from './topology.types';
+import { GraphNode } from './models/graph.node';
+import { GraphReport } from './graph.types';
 
-export class TopologyManager {
-  public async buildTree(project: Project): Promise<TopologyReport> {
+export class GraphManager {
+  public async buildGraph(project: Project): Promise<GraphReport> {
     await project.restoreInstallState();
 
     const workspaces = this.getEssentialWorkspaces(project);
@@ -12,15 +12,12 @@ export class TopologyManager {
       throw new Error(`Project doesn't have any essentail workspaces`);
     }
 
-    const essentails = workspaces.map((workspace) => {
-      const node = new TopologyNode(workspace);
+    const root = new GraphNode(project.topLevelWorkspace);
+    workspaces.forEach((workspace) => {
+      const node = new GraphNode(workspace, root);
       this.fillChildrenNodes(project, node);
-
-      return node;
+      root.addChildren(node);
     });
-
-    const root = new TopologyNode(project.topLevelWorkspace);
-    root.children = new Set(essentails);
 
     return root;
   }
@@ -70,18 +67,15 @@ export class TopologyManager {
     return new Set(usedWorkspaces);
   }
 
-  private fillChildrenNodes(project: Project, rootNode: TopologyNode): void {
-    const { workspace, history } = rootNode;
-
-    const dependences = this.getWorkspaceExternalDependencies(project, workspace);
+  private fillChildrenNodes(project: Project, rootNode: GraphNode): void {
+    const dependences = this.getWorkspaceExternalDependencies(project, rootNode.workspace);
     dependences.forEach((dependency) => {
-      const hash = dependency.locator.locatorHash;
-      if (history.has(hash)) {
+      if (rootNode.chain.has(dependency.anchoredLocator.identHash)) {
         return;
       }
 
-      const localNode = new TopologyNode(dependency, history);
-      rootNode.children.add(localNode);
+      const localNode = new GraphNode(dependency, rootNode);
+      rootNode.addChildren(localNode);
 
       this.fillChildrenNodes(project, localNode);
     });

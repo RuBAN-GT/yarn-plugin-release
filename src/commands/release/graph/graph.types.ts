@@ -1,4 +1,4 @@
-export enum TopologyOutputFormat {
+export enum GraphOutputFormat {
   json = 'json',
   tree = 'tree',
 }

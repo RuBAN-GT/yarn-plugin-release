@@ -1,10 +1,10 @@
 import { Plugin } from '@yarnpkg/core';
 
+import { GraphCommand } from './commands/release/graph';
 import { ReportCommand } from './commands/release/report';
-import { TopologyCommand } from './commands/topology/topology';
 
 const plugin: Plugin = {
-  commands: [ReportCommand, TopologyCommand],
+  commands: [ReportCommand, GraphCommand],
 };
 
 export default plugin;
