@@ -1,12 +1,14 @@
 import { Package, Project, Workspace } from '@yarnpkg/core';
 
-import { GraphReport } from './graph.types';
 import { WorkspaceNode } from './models/workspace.node';
 
-export class GraphManager {
-  public async buildGraph(project: Project): Promise<GraphReport> {
+export class WorkspaceTreeResolver {
+  public async resolve(project: Project): Promise<WorkspaceNode> {
     await project.restoreInstallState();
+    return this.buildWorkspacesTree(project);
+  }
 
+  protected buildWorkspacesTree(project: Project): WorkspaceNode {
     const workspaces = this.getEssentialWorkspaces(project);
     if (workspaces.length === 0) {
       throw new Error(`Project doesn't have any essentail workspaces`);
@@ -14,7 +16,7 @@ export class GraphManager {
 
     const root = new WorkspaceNode(project.topLevelWorkspace);
     workspaces.forEach((workspace) => {
-      const node = new WorkspaceNode(workspace, root);
+      const node = new WorkspaceNode(workspace);
       this.fillChildrenNodes(project, node);
       root.addChildren(node);
     });
@@ -74,9 +76,8 @@ export class GraphManager {
         return;
       }
 
-      const localNode = new WorkspaceNode(dependency, rootNode);
+      const localNode = new WorkspaceNode(dependency);
       rootNode.addChildren(localNode);
-
       this.fillChildrenNodes(project, localNode);
     });
   }
