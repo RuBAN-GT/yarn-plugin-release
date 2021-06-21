@@ -8,5 +8,5 @@ yarn plugin import https://raw.githubusercontent.com/RuBAN-GT/yarn-plugin-releas
 
 ## Commands
 
-* `yarn release tree` - Prints monitored workspaces tree
+* `yarn release graph` - Prints monitored workspaces graph
   * `-o,--output-format` can be `json` or `tree`

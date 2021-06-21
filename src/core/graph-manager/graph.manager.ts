@@ -1,7 +1,7 @@
 import { Package, Project, Workspace } from '@yarnpkg/core';
 
-import { GraphNode } from './models/graph.node';
 import { GraphReport } from './graph.types';
+import { WorkspaceNode } from './models/workspace.node';
 
 export class GraphManager {
   public async buildGraph(project: Project): Promise<GraphReport> {
@@ -12,9 +12,9 @@ export class GraphManager {
       throw new Error(`Project doesn't have any essentail workspaces`);
     }
 
-    const root = new GraphNode(project.topLevelWorkspace);
+    const root = new WorkspaceNode(project.topLevelWorkspace);
     workspaces.forEach((workspace) => {
-      const node = new GraphNode(workspace, root);
+      const node = new WorkspaceNode(workspace, root);
       this.fillChildrenNodes(project, node);
       root.addChildren(node);
     });
@@ -67,14 +67,14 @@ export class GraphManager {
     return new Set(usedWorkspaces);
   }
 
-  private fillChildrenNodes(project: Project, rootNode: GraphNode): void {
+  private fillChildrenNodes(project: Project, rootNode: WorkspaceNode): void {
     const dependences = this.getWorkspaceExternalDependencies(project, rootNode.workspace);
     dependences.forEach((dependency) => {
       if (rootNode.chain.has(dependency.anchoredLocator.identHash)) {
         return;
       }
 
-      const localNode = new GraphNode(dependency, rootNode);
+      const localNode = new WorkspaceNode(dependency, rootNode);
       rootNode.addChildren(localNode);
 
       this.fillChildrenNodes(project, localNode);

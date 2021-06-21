@@ -9,7 +9,7 @@ import { GraphManager, GraphNode, graphNodeJsonConverter, graphNodeTreeConverter
 export class GraphCommand extends Command<CommandContext> {
   public static usage: Usage = Command.Usage({
     category: 'Release commands',
-    description: 'Generates tree',
+    description: 'Prints monitored workspaces graph',
   });
 
   @Command.String('-o,--output-format', {
@@ -19,7 +19,7 @@ export class GraphCommand extends Command<CommandContext> {
 
   public graphManager: GraphManager = new GraphManager();
 
-  @Command.Path('release', 'tree')
+  @Command.Path('release', 'graph')
   public async execute(): Promise<void> {
     this.validateInput();
 
