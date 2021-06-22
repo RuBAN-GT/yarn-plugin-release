@@ -16,7 +16,7 @@ export class WorkspaceTreeResolver {
 
     const root = new WorkspaceNode(project.topLevelWorkspace);
     workspaces.forEach((workspace) => {
-      const node = new WorkspaceNode(workspace);
+      const node = new WorkspaceNode(workspace, root);
       this.fillChildrenNodes(project, node);
       root.addChildren(node);
     });
@@ -72,11 +72,11 @@ export class WorkspaceTreeResolver {
   private fillChildrenNodes(project: Project, rootNode: WorkspaceNode): void {
     const dependences = this.getWorkspaceExternalDependencies(project, rootNode.workspace);
     dependences.forEach((dependency) => {
-      if (rootNode.chain.has(dependency.anchoredLocator.identHash)) {
+      if (rootNode.chain.has(dependency.anchoredLocator)) {
         return;
       }
 
-      const localNode = new WorkspaceNode(dependency);
+      const localNode = new WorkspaceNode(dependency, rootNode);
       rootNode.addChildren(localNode);
       this.fillChildrenNodes(project, localNode);
     });

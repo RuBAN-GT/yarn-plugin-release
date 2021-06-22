@@ -1,3 +1,4 @@
+import { Workspace } from '@yarnpkg/core';
 import TreeModel, { Node } from 'tree-model';
 
 import { WorkspaceNode } from './models/workspace.node';
@@ -10,6 +11,13 @@ export class WorkspaceTreeManager {
   constructor(root: WorkspaceNode) {
     this.root = root;
     this.tree = this.parseWorkspaceNode(root);
+  }
+
+  public findNodesByWorkspaces(workspaces: Set<Workspace>): WorkspaceNode[] {
+    const nodes = this.tree.all(({ model }) => {
+      return workspaces.has(model.workspace);
+    });
+    return nodes.map((node) => node.model);
   }
 
   protected parseWorkspaceNode(rootNode: WorkspaceNode): Node<WorkspaceNode> {

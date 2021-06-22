@@ -2,9 +2,10 @@ import { Plugin } from '@yarnpkg/core';
 
 import { GraphCommand } from './commands/release/graph';
 import { ReportCommand } from './commands/release/report';
+import { CheckCommand } from './commands/release/version';
 
 const plugin: Plugin = {
-  commands: [ReportCommand, GraphCommand],
+  commands: [ReportCommand, GraphCommand, CheckCommand],
 };
 
 export default plugin;

@@ -1,4 +1,4 @@
-import { IdentHash, Workspace } from '@yarnpkg/core';
+import { Locator, Workspace } from '@yarnpkg/core';
 
 import { TreeNode } from '../tree.types';
 
@@ -7,7 +7,7 @@ export class WorkspaceNode implements TreeNode {
   public readonly children: WorkspaceNode[] = [];
   public readonly workspace: Workspace;
 
-  protected _chain: Set<IdentHash> = new Set();
+  protected _chain: Set<Locator> = new Set();
 
   constructor(workspace: Workspace, parent?: WorkspaceNode) {
     this.parent = parent;
@@ -16,12 +16,12 @@ export class WorkspaceNode implements TreeNode {
     this.generateChain();
   }
 
-  public get chain(): Set<IdentHash> {
+  public get chain(): Set<Locator> {
     return this._chain;
   }
 
-  public get id(): IdentHash {
-    return this.workspace.anchoredLocator.identHash;
+  public get id(): Locator {
+    return this.workspace.anchoredLocator;
   }
 
   public get name(): string {

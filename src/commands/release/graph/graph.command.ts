@@ -9,7 +9,6 @@ import {
   treeNodeJsonConverter,
   simpleTreeNodeConverter,
   WorkspaceNode,
-  WorkspaceTreeManager,
 } from '../../../core/workspace-tree';
 
 export class GraphCommand extends Command<CommandContext> {
