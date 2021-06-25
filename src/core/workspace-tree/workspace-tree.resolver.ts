@@ -3,6 +3,9 @@ import { Package, Project, Workspace } from '@yarnpkg/core';
 import { WorkspaceNode } from './models/workspace.node';
 
 export class WorkspaceTreeResolver {
+  /**
+   * Get the full reverted workspaces tree (from the most deepest dependency)
+   */
   public async resolve(project: Project): Promise<WorkspaceNode> {
     await project.restoreInstallState();
     return this.buildWorkspacesTree(project);

@@ -8066,6 +8066,7 @@ typescript@4.2.2:
     ts-jest: ^27.0.3
     ts-node: ^10.0.0
     tslib: ^2.3.0
+    typanion: ^3.3.1
     typescript: 4.2.2
   languageName: unknown
   linkType: soft

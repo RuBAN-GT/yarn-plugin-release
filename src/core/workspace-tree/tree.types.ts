@@ -1,7 +1,10 @@
-export interface TreeNode {
-  parent?: TreeNode;
+export interface TreeNode<Id = any> {
+  parent?: TreeNode<Id>;
+  id: Id;
   name: string;
-  children: TreeNode[];
+  chain: Set<Id>;
+  depth: number;
+  children: TreeNode<Id>[];
 }
 
 export interface TreeNodeJson {

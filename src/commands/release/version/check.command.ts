@@ -22,11 +22,13 @@ export class CheckCommand extends Command<CommandContext> {
 
     const affectedNodes = await this.versionManager.findCandidates(project);
 
-    const chains = affectedNodes.map((node) => {
-      return [...node.chain].map((locator) => {
+    const chains: string[][] = [];
+    affectedNodes.forEach((node) => {
+      const chain: string[] = [...node.chain].map((locator) => {
         const { manifest } = project.getWorkspaceByLocator(locator);
         return manifest.raw.name;
       });
+      chains.push(chain);
     });
 
     console.dir('Affected chains:');

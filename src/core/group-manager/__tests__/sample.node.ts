@@ -1,11 +1,16 @@
-import { TreeNode } from '../../workspace-tree';
+import { BasicNode } from '../../workspace-tree';
 
-export class SampleNode implements TreeNode {
-  public readonly parent?: SampleNode;
-  public readonly children: SampleNode[] = [];
-  public readonly name: string = '';
+export class SampleNode extends BasicNode {
+  public readonly id: string;
+  public readonly name: string;
 
-  public addChildren(node: SampleNode): void {
-    this.children.push(node);
+  constructor(id: string, parent?: SampleNode) {
+    super();
+
+    this.parent = parent;
+    this.id = id;
+    this.name = id;
+
+    this.generateChain();
   }
 }

@@ -1,4 +1,4 @@
-import { Project } from '@yarnpkg/core';
+import { Locator, Project, Workspace } from '@yarnpkg/core';
 
 import { openVersionFile, VersionFile } from '../../utils/version.utils';
 import { NoChangesError } from '../errors';
@@ -11,15 +11,19 @@ export class VersionManager {
     this.workspaceResolver = new WorkspaceTreeResolver();
   }
 
-  public async findCandidates(project: Project): Promise<WorkspaceNode[]> {
+  /**
+   * Find the most deepest workspaces nodes with changed files
+   */
+  public async findCandidates(project: Project): Promise<Map<Locator, WorkspaceNode>> {
     const rootNode = await this.workspaceResolver.resolve(project);
     const treeManager = new WorkspaceTreeManager(rootNode);
     const versionFile = await this.generateVersionFile(project);
 
+    // Exclude root workspace in order to avoid duplicated operations
     const changedWorkspaces = [...versionFile.changedWorkspaces].filter((w) => w !== project.topLevelWorkspace);
-    const affectedNodes = treeManager.findNodesByWorkspaces(changedWorkspaces);
 
-    return affectedNodes;
+    // Take affected nodes
+    return this.findAffectedNodes(treeManager, changedWorkspaces);
   }
 
   protected async generateVersionFile(project: Project): Promise<VersionFile> {
@@ -29,5 +33,23 @@ export class VersionManager {
     }
 
     return versionFile;
+  }
+
+  protected findAffectedNodes(
+    treeManager: WorkspaceTreeManager,
+    changedWorkspaces: Workspace[],
+  ): Map<Locator, WorkspaceNode> {
+    const affectedMap: Map<Locator, WorkspaceNode> = new Map();
+
+    treeManager.findNodesByWorkspaces(changedWorkspaces).forEach((node) => {
+      const locator = node.workspace.locator;
+      const existingNode = affectedMap.get(locator);
+
+      if (!existingNode || existingNode.depth < node.depth) {
+        affectedMap.set(locator, node);
+      }
+    });
+
+    return affectedMap;
   }
 }
