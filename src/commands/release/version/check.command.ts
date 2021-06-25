@@ -2,9 +2,7 @@ import { CommandContext, Project } from '@yarnpkg/core';
 import { Command, Usage } from 'clipanion';
 import { Configuration } from '@yarnpkg/core';
 
-import { WorkspaceTreeResolver, WorkspaceTreeManager } from '../../../core/workspace-tree';
-import { openVersionFile } from '../../../utils/version.utils';
-import { NoChangesError } from '../../../core/errors';
+import { VersionManager } from '../../../core/version-manager';
 
 export class CheckCommand extends Command<CommandContext> {
   // Meta
@@ -14,7 +12,7 @@ export class CheckCommand extends Command<CommandContext> {
   });
 
   // Dependencies
-  public readonly workspaceResolver: WorkspaceTreeResolver = new WorkspaceTreeResolver();
+  public readonly versionManager: VersionManager = new VersionManager();
 
   // Commands
   @Command.Path('release', 'version', 'check')
@@ -22,16 +20,8 @@ export class CheckCommand extends Command<CommandContext> {
     const configuration = await Configuration.find(this.context.cwd, this.context.plugins);
     const { project } = await Project.find(configuration, this.context.cwd);
 
-    const rootNode = await this.workspaceResolver.resolve(project);
-    const treeManager = new WorkspaceTreeManager(rootNode);
+    const affectedNodes = await this.versionManager.findCandidates(project);
 
-    const versionFile = await openVersionFile(project);
-    if (!versionFile) {
-      throw new NoChangesError();
-    }
-
-    // @TODO Put into group manager
-    const affectedNodes = treeManager.findNodesByWorkspaces(versionFile.changedWorkspaces);
     const chains = affectedNodes.map((node) => {
       return [...node.chain].map((locator) => {
         const { manifest } = project.getWorkspaceByLocator(locator);

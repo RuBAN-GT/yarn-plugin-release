@@ -13,9 +13,9 @@ export class WorkspaceTreeManager {
     this.tree = this.parseWorkspaceNode(root);
   }
 
-  public findNodesByWorkspaces(workspaces: Set<Workspace>): WorkspaceNode[] {
+  public findNodesByWorkspaces(workspaces: Workspace[]): WorkspaceNode[] {
     const nodes = this.tree.all(({ model }) => {
-      return workspaces.has(model.workspace);
+      return workspaces.includes(model.workspace);
     });
     return nodes.map((node) => node.model);
   }
