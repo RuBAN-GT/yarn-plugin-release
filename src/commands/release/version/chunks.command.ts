@@ -5,6 +5,7 @@ import { Configuration } from '@yarnpkg/core';
 import { VersionManager } from '../../../core/version-manager';
 import { GroupManager, groupsJsonReportConverter } from '../../../core/group-manager';
 import { getMapValues } from '../../../utils/map.utils';
+import { getAvailableProcessesCount } from '../../../utils/system.utils';
 
 export class ChunksCommand extends Command<CommandContext> {
   // Meta
@@ -16,7 +17,7 @@ export class ChunksCommand extends Command<CommandContext> {
   @Command.String('-g,--group-by', {
     description: 'Slice workspaces by this number, it should be positive number',
   })
-  public groupBy: string = '1';
+  public groupBy: string | number = getAvailableProcessesCount();
 
   // Dependencies
   public readonly versionManager: VersionManager = new VersionManager();
